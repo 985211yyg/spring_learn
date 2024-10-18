@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: gateway-registry
+  cloud:
+    # 配置 gateway 服务网关
+    gateway:
+      enabled: true
+      routes:
+        - id: iocoder # 路由 ID
+          uri: http://www.iocoder.cn # 路由目标地址
+          predicates: # 断言 Predicates
+            - Path=/blog
+          filters: # 过滤器 Filters
+            - StripPrefix=1
+        - id: oschina # 路由 ID
+          uri: https://www.oschina.net # 路由目标地址
+          predicates: # 断言 Predicates
+            - Path=/oschina
+            - Method=GET
+          filters: # 过滤器 Filters
+            - StripPrefix=1
+      discovery:
+        locator:
+          enabled: true  # 开启从注册中心动态创建路由的功能
+          url-expression: "'lb://'+serviceId"  # 通过 SpEL 表达式指定从注册中心获取服务地址
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848  # Nacos 服务器地址
+server:
+  port: 8888
